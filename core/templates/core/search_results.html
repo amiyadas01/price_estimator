@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="mb-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Market</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Intelligence</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-0">Market Analysis: <span class="text-primary">"{{ query }}"</span></h2>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-outline-light rounded-pill px-4 d-flex align-items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+        Modify Search
+    </a>
+</div>
+
+{% if not results %}
+    <div class="card border-0 p-5 text-center shadow-2xl">
+        <div class="mb-4">
+            <div class="display-1 opacity-20">📡</div>
+        </div>
+        <h3 class="fw-bold">Signal Lost</h3>
+        <p class="text-muted mx-auto" style="max-width: 400px;">No matching assets found across our network. Try adjusting your parameters or using broader keywords.</p>
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary px-5 py-2">Back to Dashboard</a>
+        </div>
+    </div>
+{% else %}
+    <!-- Market Pulse Header -->
+    <div class="card border-0 mb-5 overflow-hidden shadow-2xl position-relative" style="background: linear-gradient(135deg, #050505 0%, #111 100%);">
+        <div class="card-body p-4 p-md-5 text-center position-relative z-1">
+            <div class="text-primary small fw-bold tracking-widest mb-3 uppercase">Real-Time Market Estimate</div>
+            <div class="d-flex align-items-baseline justify-content-center gap-2">
+                <span class="text-white-50 h2 mb-0 fw-light">FROM</span>
+                <h1 class="display-3 fw-black mb-0 text-white">{{ price_min }}</h1>
+                <span class="text-white-50 h2 mb-0 fw-light mx-2">TO</span>
+                <h1 class="display-3 fw-black mb-0 text-white">{{ price_max }}</h1>
+            </div>
+            <p class="mt-4 text-muted mb-0">Based on {{ results|length }} aggregated signals from verified vendors</p>
+        </div>
+        <div class="position-absolute top-0 start-0 w-100 h-100 opacity-20" style="background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%); filter: blur(60px);"></div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {% for item in results %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-lg overflow-hidden group">
+                    <div class="position-relative overflow-hidden" style="height: 240px; background: #000;">
+                        <img src="{{ item.image }}" class="w-100 h-100 object-fit-contain p-4 transition-transform duration-500 group-hover:scale-110" alt="{{ item.title }}" onerror="this.src='https://via.placeholder.com/300x300?text=No+Preview'">
+                        <div class="position-absolute top-0 end-0 m-3">
+                            <span class="badge badge-source {% if item.source == 'Amazon.in' %}bg-warning text-dark{% elif item.source == 'Flipkart' %}bg-primary{% else %}bg-secondary{% endif %} shadow-sm">
+                                {{ item.source }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h6 class="card-title fw-bold mb-3 line-clamp-2" style="font-size: 0.95rem; line-height: 1.5;">{{ item.title }}</h6>
+                        <div class="mt-auto pt-3 border-top border-white border-opacity-5">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="text-muted small">Current Price</span>
+                                <span class="h4 mb-0 fw-black text-primary">{{ item.price }}</span>
+                            </div>
+                            <a href="{{ item.url }}" target="_blank" class="btn btn-primary w-100 rounded-xl py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                Inspect 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                                    <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+    .fw-black { font-weight: 900; }
+    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+    .object-fit-contain { object-fit: contain; }
+    .rounded-xl { border-radius: 14px; }
+    .transition-transform { transition: transform 0.4s ease; }
+    .duration-500 { transition-duration: 500ms; }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .badge-source { font-size: 0.65rem; font-weight: 800; }
+</style>
+{% endblock %}

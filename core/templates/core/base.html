@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PriceCheck — Market Insights</title>
+    <!-- Bootstrap 5 CDN -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts: Inter & Bricolage Grotesque -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-pure: #000000;
+        --bg-card: #0a0a0a;
+        --primary: #3b82f6;
+        --primary-glow: rgba(59, 130, 246, 0.3);
+        --border: rgba(255, 255, 255, 0.08);
+        --text-muted: #a1a1aa;
+      }
+
+      body {
+        background-color: var(--bg-pure);
+        color: #ffffff;
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      .navbar-brand {
+        font-family: "Bricolage Grotesque", sans-serif;
+        letter-spacing: -0.03em;
+      }
+
+      .navbar {
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 1.25rem 0;
+      }
+
+      .navbar-brand {
+        font-weight: 800;
+        font-size: 1.5rem;
+        background: linear-gradient(to right, #60a5fa, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 0 20px var(--primary-glow);
+        transform: translateY(-4px);
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .btn-primary:hover {
+        background-color: #2563eb;
+        transform: scale(1.02);
+        box-shadow: 0 0 15px var(--primary-glow);
+      }
+
+      .btn-outline-light {
+        border-radius: 12px;
+        border-color: var(--border);
+      }
+
+      footer {
+        background-color: var(--bg-card);
+        border-top: 1px solid var(--border);
+        padding: 3rem 0;
+        margin-top: auto;
+      }
+
+      /* Skeleton Loading Animation */
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #121212 25%,
+          #1a1a1a 50%,
+          #121212 75%
+        );
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-pure);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #262626;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3f3f46;
+      }
+
+      .badge-source {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">PriceCheck</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            {% if user %}
+            <li class="nav-item me-4">
+              <span class="text-muted small"
+                >Hello,
+                <span class="text-white fw-bold">{{ user.name }}</span></span
+              >
+            </li>
+            <li class="nav-item me-3">
+              <a class="nav-link fw-medium" href="{% url 'history' %}"
+                >My History</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="btn btn-outline-danger btn-sm px-3"
+                href="{% url 'logout' %}"
+                >Sign Out</a
+              >
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="btn btn-primary btn-sm px-4" href="{% url 'login' %}"
+                >Get Started</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-5">{% block content %}{% endblock %}</main>
+
+    <footer class="text-center">
+      <div class="container">
+        <h4 class="navbar-brand mb-3 d-inline-block">PriceCheck</h4>
+        <p class="text-muted small mb-0">
+          The world's most robust real-time price intelligence engine.
+        </p>
+        <div class="mt-4 text-muted extra-small">
+          &copy; 2026 PriceCheck Labs. Experimental build v3.0.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

@@ -38,8 +38,8 @@ def fetch_market_prices(query: str) -> list[dict]:
                 "title": item.get("title"),
                 "price": item.get("price"),
                 "source": item.get("source"),
-                "url": item.get("link"),
-                "image": item.get("thumbnail")
+                "url": item.get("link") or item.get("product_link") or "#",
+                "image": item.get("thumbnail") or "https://via.placeholder.com/300x300?text=No+Image"
             })
             
         return normalized_results

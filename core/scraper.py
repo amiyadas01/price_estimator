@@ -32,15 +32,16 @@ def scrape_indiamart(query: str) -> list[dict]:
             img = item.select_one('img')
             
             if title:
-                link = url_tag['href'] if url_tag and url_tag.has_attr('href') else url
-                if not link.startswith('http'): link = "https://www.indiamart.com" + link
+                link = url_tag['href'] if (url_tag and url_tag.has_attr('href')) else "#"
+                if link != "#" and not link.startswith('http'): 
+                    link = "https://www.indiamart.com" + link
                 
                 results.append({
                     "title": title.text.strip(),
                     "price": price.text.strip() if price else "Price on Request",
                     "source": "IndiaMART",
                     "url": link,
-                    "image": img['src'] if img and img.has_attr('src') else "https://via.placeholder.com/200?text=IndiaMART"
+                    "image": (img['src'] if (img and img.has_attr('src')) else None) or "https://via.placeholder.com/200?text=IndiaMART"
                 })
         return results
     except Exception:
@@ -64,12 +65,13 @@ def scrape_snapdeal(query: str) -> list[dict]:
             url_tag = item.select_one('a')
             img = item.select_one('img')
             if title and price:
+                link = url_tag['href'] if url_tag else "#"
                 results.append({
                     "title": title.get_text(strip=True),
-                    "price": price.get_text(strip=True).replace("Rs.", "₹").strip(),
+                    "price": price.get_text(strip=True).replace("Rs.", "₹").replace("Rs", "₹").strip(),
                     "source": "Snapdeal",
-                    "url": url_tag['href'] if url_tag else url,
-                    "image": img.get('data-src') or img.get('src') or "https://via.placeholder.com/200?text=Snapdeal"
+                    "url": link if link.startswith('http') else f"https://www.snapdeal.com{link}" if link != "#" else "#",
+                    "image": (img.get('data-src') or img.get('src') or "https://via.placeholder.com/200?text=Snapdeal") if img else "https://via.placeholder.com/200?text=Snapdeal"
                 })
         return results
     except Exception:
